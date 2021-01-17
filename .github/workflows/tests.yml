@@ -77,5 +77,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: . shared/install-cargo-upgrade.sh
-      - run: exec cargo upgrade -V
+      - uses: actions-rs/cargo@v1
+        with:
+          command: upgrade
+          args: -V
       - run: . shared/install-cargo-upgrade.sh
