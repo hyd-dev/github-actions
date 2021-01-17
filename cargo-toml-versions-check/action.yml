@@ -13,4 +13,5 @@ runs:
         exec git diff --exit-code --color
       shell: bash
       env:
+        CARGO_HTTP_SSL_VERSION: tlsv1.2
         RUST_BACKTRACE: 1

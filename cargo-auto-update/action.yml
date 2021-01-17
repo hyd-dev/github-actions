@@ -42,4 +42,6 @@ runs:
         fi
       shell: bash
       env:
+        GIT_SSL_VERSION: tlsv1.2
+        CARGO_HTTP_SSL_VERSION: tlsv1.2
         RUST_BACKTRACE: 1

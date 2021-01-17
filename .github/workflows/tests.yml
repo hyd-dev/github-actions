@@ -4,6 +4,7 @@ on:
     branches: [master]
 
 env:
+  GIT_SSL_VERSION: tlsv1.3
   http_proxy: 0.0.0.0
 
 jobs:
@@ -12,8 +13,6 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-        with:
-          submodules: true
       - name: Test the action works
         uses: hyd-dev/github-actions/diff-check@HEAD
         with:
