@@ -6,7 +6,8 @@ CARGO_PROFILE_RELEASE_DEBUG=1 \
     http_proxy=0.0.0.0 \
     cargo install \
     --git=https://github.com/hyd-dev/cargo-edit.git \
-    --branch=toml-edit-patch \
     --bin=cargo-upgrade \
     --color=always \
+    --no-default-features \
+    --features=upgrade \
     cargo-edit
