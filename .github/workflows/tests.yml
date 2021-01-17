@@ -2,6 +2,7 @@ name: Tests
 on:
   push:
     branches: [master]
+  pull_request:
 
 env:
   GIT_SSL_VERSION: tlsv1.3
@@ -26,6 +27,7 @@ jobs:
         run: false
   cargo-auto-update:
     timeout-minutes: 10
+    if: github.repository == 'hyd-dev/github-actions' && github.event_name == 'push'
     runs-on: ubuntu-20.04
     steps:
       - name: Create git repositories
@@ -52,6 +54,7 @@ jobs:
           workspace: clone
   cargo-toml-versions-check:
     timeout-minutes: 10
+    if: github.repository == 'hyd-dev/github-actions' && github.event_name == 'push'
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -68,3 +71,11 @@ jobs:
       - name: Check if the steps that was expected to fail really failed
         if: steps.failure.outcome != 'failure'
         run: false
+  install-cargo-upgrade:
+    timeout-minutes: 10
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - run: . shared/install-cargo-upgrade.sh
+      - run: exec cargo upgrade -V
+      - run: . shared/install-cargo-upgrade.sh
