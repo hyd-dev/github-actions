@@ -1,5 +1,5 @@
 # github-actions
-Some useful GitHub Actions:
+Some useful GitHub Actions (`ubuntu-20.04` only):
 - [diff-check](./diff-check): runs `git diff --check`
 - [cargo-auto-update](./cargo-auto-update): automatically updates versions in `Cargo.toml` and `Cargo.lock`
 - [cargo-toml-versions-check](./cargo-toml-versions-check): checks if versions specified in `Cargo.toml` match the versions in `Cargo.lock`
