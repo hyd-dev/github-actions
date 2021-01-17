@@ -1,0 +1,16 @@
+inputs:
+  workspace:
+    default: ${{github.workspace}}
+
+runs:
+  using: composite
+  steps:
+    - run: |
+        unset CDPATH
+        cd -- '${{inputs.workspace}}'
+        . '${{github.action_path}}/../shared/install-cargo-upgrade.sh'
+        cargo upgrade --workspace --to-lockfile
+        exec git diff --exit-code --color
+      shell: bash
+      env:
+        RUST_BACKTRACE: 1

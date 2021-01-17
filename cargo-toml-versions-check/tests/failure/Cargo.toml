@@ -1,0 +1,10 @@
+[package]
+name = "failure"
+version = "0.1.0"
+authors = ["hyd-dev <yd-huang@outlook.com>"]
+edition = "2018"
+license = "MPL-2.0"
+publish = false
+
+[dependencies]
+apply-macro = "1.0.0"

@@ -1,0 +1,71 @@
+name: Tests
+on:
+  push:
+    branches: [master]
+
+env:
+  http_proxy: 0.0.0.0
+
+jobs:
+  diff-check:
+    timeout-minutes: 1
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Test the action works
+        uses: hyd-dev/github-actions/diff-check@HEAD
+        with:
+          paths: ':!:diff-check/test'
+      - name: Test the action fails
+        id: failure
+        uses: hyd-dev/github-actions/diff-check@HEAD
+        continue-on-error: true
+      - name: Check if the steps that was expected to fail really failed
+        if: steps.failure.outcome != 'failure'
+        run: false
+  cargo-auto-update:
+    timeout-minutes: 10
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Create git repositories
+        env:
+          CARGO_TERM_VERBOSE: true
+          CARGO_TERM_COLOR: always
+        run: |
+          cargo new origin
+          cd origin
+          readonly version=1.0.5
+          echo "apply-macro = \"=$version\"" >>Cargo.toml
+          cargo generate-lockfile
+          sed -Ei "s/=($version)/\\1/" Cargo.toml
+          git add .
+          git -c user.name=ghost -c user.email=ghost@ghost.invalid commit -m '***Initial commit***'
+          git clone --bare . ../origin-bare.git
+          git clone ../origin-bare.git ../clone
+      - uses: hyd-dev/github-actions/cargo-auto-update@HEAD
+        with:
+          workspace: clone
+      - run: git -C origin-bare.git show --color | fgrep 'Auto update'
+      - uses: hyd-dev/github-actions/cargo-auto-update@HEAD
+        with:
+          workspace: clone
+  cargo-toml-versions-check:
+    timeout-minutes: 10
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Test the action works
+        uses: hyd-dev/github-actions/cargo-toml-versions-check@HEAD
+        with:
+          workspace: cargo-toml-versions-check/tests/success
+      - name: Test the action fails
+        id: failure
+        uses: hyd-dev/github-actions/cargo-toml-versions-check@HEAD
+        with:
+          workspace: cargo-toml-versions-check/tests/failure
+        continue-on-error: true
+      - name: Check if the steps that was expected to fail really failed
+        if: steps.failure.outcome != 'failure'
+        run: false

@@ -1,0 +1,45 @@
+inputs:
+  workspace:
+    default: ${{github.workspace}}
+  token:
+    default: ${{github.token}}
+
+runs:
+  using: composite
+  steps:
+    - run: |
+        set -o pipefail
+        unset CDPATH
+        cd -- '${{inputs.workspace}}'
+        [ -e Cargo.lock ]
+        output=$(cargo update --color=never 2>&1 | sed -En '
+          /Updating.+->|Adding|Removing/ {
+            s/^\s+//
+            s/^Updating/Update/
+            s/^Adding/Add/
+            s/^Removing/Remove/
+            p
+          }
+        ')
+        if ! git diff --exit-code --color -- Cargo.lock; then
+          . '${{github.action_path}}/../shared/install-cargo-upgrade.sh'
+          cargo upgrade --workspace --to-lockfile
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -am "Auto update
+
+        $output
+
+        Link to workflow run: ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+          git log -1 --color
+          git -c protocol.version=2 pull -nf --no-recurse-submodules -r
+          cred=$(echo -n 'github-actions:${{inputs.token}}' | base64)
+          exec git \
+            -c protocol.version=2 \
+            -c 'http.${{github.server_url}}/.extraHeader'= \
+            -c 'http.${{github.server_url}}/.extraHeader'="AUTHORIZATION: basic $cred" \
+            push
+        fi
+      shell: bash
+      env:
+        RUST_BACKTRACE: 1
