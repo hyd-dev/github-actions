@@ -8,7 +8,7 @@ runs:
     - run: |
         unset CDPATH
         cd -- '${{inputs.workspace}}'
-        . '${{github.action_path}}/../shared/install-cargo-upgrade.sh'
+        . -- '${{github.action_path}}/../shared/install-cargo-upgrade.sh'
         cargo upgrade --workspace --to-lockfile
         exec git diff --exit-code --color
       shell: bash

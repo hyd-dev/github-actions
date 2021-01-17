@@ -11,7 +11,10 @@ runs:
         set -o pipefail
         unset CDPATH
         cd -- '${{inputs.workspace}}'
-        [ -e Cargo.lock ]
+        if ! [ -e Cargo.lock ]; then
+          echo 1>&2 'Cargo.lock does not exist.'
+          exit 1
+        fi
         output=$(cargo update --color=never 2>&1 | sed -En '
           /Updating.+->|Adding|Removing/ {
             s/^\s+//
@@ -22,7 +25,7 @@ runs:
           }
         ')
         if ! git diff --exit-code --color -- Cargo.lock; then
-          . '${{github.action_path}}/../shared/install-cargo-upgrade.sh'
+          . -- '${{github.action_path}}/../shared/install-cargo-upgrade.sh'
           cargo upgrade --workspace --to-lockfile
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
