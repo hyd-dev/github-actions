@@ -1,4 +1,5 @@
-RUSTFLAGS='-C target-cpu=native' \
+RUSTC_BOOTSTRAP=1 \
+    RUSTFLAGS='-C target-cpu=native -Z proc-macro-backtrace -Z share-generics' \
     CARGO_PROFILE_RELEASE_DEBUG=1 \
     CARGO_PROFILE_RELEASE_OPT_LEVEL=0 \
     CARGO_PROFILE_RELEASE_PANIC=abort \
@@ -12,4 +13,5 @@ RUSTFLAGS='-C target-cpu=native' \
     --color=always \
     --no-default-features \
     --features=upgrade \
+    -v \
     cargo-edit
