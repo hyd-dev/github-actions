@@ -44,7 +44,7 @@ jobs:
           git add .
           git -c user.name=ghost -c user.email=ghost@ghost.invalid commit -m '***Initial commit***'
           git clone --bare . ../origin-bare.git
-          git clone ../origin-bare.git ../clone
+          exec git clone ../origin-bare.git ../clone
       - uses: hyd-dev/github-actions/cargo-auto-update@HEAD
         with:
           workspace: clone
