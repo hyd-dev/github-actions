@@ -12,4 +12,5 @@ RUSTFLAGS='-C target-cpu=native' \
     --color=always \
     --no-default-features \
     --features=upgrade \
+    -v \
     cargo-edit
